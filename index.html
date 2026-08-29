@@ -1,0 +1,1980 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#171522">
+<title>Syren</title>
+
+<style>
+:root{
+  --bg:#111018;
+  --panel:#191722;
+  --card:#211f2d;
+  --line:#363243;
+  --text:#f4f1fa;
+  --muted:#aaa5b8;
+  --accent:#b99cff;
+  --accent2:#d6c5ff;
+  --danger:#e98d9b;
+  --success:#8fd0ad;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:linear-gradient(145deg,#111018,#171521);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif;
+  min-height:100vh;
+}
+
+button,input,select{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+.app{
+  width:min(1100px,calc(100% - 28px));
+  margin:auto;
+  padding:28px 0 50px;
+}
+
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:16px;
+  padding:22px;
+  border:1px solid var(--line);
+  background:rgba(25,23,34,.92);
+  border-radius:24px;
+  margin-bottom:20px;
+}
+
+.logo-small{
+  letter-spacing:.25em;
+  color:var(--muted);
+  font-size:12px;
+}
+
+h1,h2,h3,p{
+  margin:0;
+}
+
+.header h1{
+  margin-top:4px;
+  font-size:28px;
+}
+
+.header p{
+  color:var(--muted);
+  margin-top:7px;
+  font-size:14px;
+}
+
+.btn{
+  border:1px solid var(--line);
+  background:transparent;
+  color:var(--text);
+  border-radius:12px;
+  padding:10px 14px;
+  min-height:42px;
+}
+
+.btn:hover{
+  border-color:var(--accent);
+}
+
+.btn.primary{
+  background:var(--accent);
+  border-color:var(--accent);
+  color:#17131f;
+  font-weight:700;
+}
+
+.btn.danger{
+  color:var(--danger);
+}
+
+.layout{
+  display:grid;
+  grid-template-columns:1.15fr .85fr;
+  gap:20px;
+}
+
+.stack{
+  display:grid;
+  gap:20px;
+}
+
+.panel{
+  border:1px solid var(--line);
+  background:rgba(25,23,34,.9);
+  border-radius:24px;
+  padding:22px;
+}
+
+.panel-title{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+}
+
+.eyebrow{
+  color:var(--muted);
+  font-size:13px;
+}
+
+.panel h2{
+  margin-top:5px;
+  font-size:21px;
+}
+
+.games{
+  margin-top:18px;
+  display:grid;
+  gap:10px;
+}
+
+.game{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:13px;
+}
+
+.game-main{
+  flex:1;
+  min-width:0;
+  cursor:pointer;
+}
+
+.game-name{
+  font-weight:700;
+}
+
+.game-count{
+  color:var(--muted);
+  font-size:13px;
+  margin-top:4px;
+}
+
+.icon-btn{
+  border:0;
+  background:transparent;
+  color:var(--muted);
+  padding:7px;
+  border-radius:8px;
+}
+
+.icon-btn:hover{
+  color:var(--text);
+  background:var(--card);
+}
+
+.filters{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  margin-top:16px;
+}
+
+.filter{
+  border:1px solid var(--line);
+  background:transparent;
+  color:var(--muted);
+  border-radius:10px;
+  padding:8px 11px;
+}
+
+.filter.active{
+  color:var(--text);
+  border-color:var(--accent);
+  background:rgba(185,156,255,.1);
+}
+
+.tasks{
+  margin-top:14px;
+  display:grid;
+  gap:8px;
+}
+
+.task{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  border:1px solid var(--line);
+  border-radius:15px;
+  padding:12px;
+}
+
+.check{
+  width:19px;
+  height:19px;
+  accent-color:var(--accent);
+  flex:none;
+}
+
+.task-main{
+  flex:1;
+  min-width:0;
+}
+
+.task-title{
+  font-weight:650;
+  word-break:break-word;
+}
+
+.task.done .task-title{
+  text-decoration:line-through;
+  opacity:.5;
+}
+
+.task-meta{
+  color:var(--muted);
+  font-size:12px;
+  margin-top:4px;
+}
+
+.deadline{
+  white-space:nowrap;
+  color:var(--muted);
+  font-size:12px;
+}
+
+.deadline.today{
+  color:var(--accent2);
+}
+
+.deadline.overdue{
+  color:var(--danger);
+}
+
+.money-total{
+  margin-top:14px;
+}
+
+.money-total small{
+  color:var(--muted);
+}
+
+.money-total strong{
+  display:block;
+  font-size:38px;
+  margin-top:2px;
+}
+
+.year-total{
+  color:var(--muted);
+  font-size:13px;
+  margin-top:4px;
+}
+
+.bills{
+  margin-top:20px;
+  display:grid;
+  gap:13px;
+}
+
+.bill{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding-bottom:13px;
+  border-bottom:1px solid var(--line);
+}
+
+.bill-main{
+  flex:1;
+  min-width:0;
+}
+
+.bill-name{
+  font-weight:650;
+}
+
+.bill-day{
+  color:var(--muted);
+  font-size:12px;
+  margin-top:3px;
+}
+
+.bill-amount{
+  white-space:nowrap;
+  font-weight:700;
+}
+
+.deadlines{
+  margin-top:16px;
+  display:grid;
+  gap:8px;
+}
+
+.deadline-card{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:12px;
+}
+
+.deadline-card small{
+  display:block;
+  color:var(--muted);
+  margin-top:4px;
+}
+
+.empty{
+  border:1px dashed var(--line);
+  border-radius:15px;
+  padding:18px;
+  color:var(--muted);
+  font-size:14px;
+  text-align:center;
+}
+
+dialog{
+  width:min(92vw,500px);
+  border:1px solid var(--line);
+  border-radius:22px;
+  background:var(--panel);
+  color:var(--text);
+  padding:0;
+}
+
+dialog::backdrop{
+  background:rgba(0,0,0,.7);
+}
+
+.modal{
+  padding:22px;
+}
+
+.modal h2{
+  margin-bottom:18px;
+}
+
+.form{
+  display:grid;
+  gap:14px;
+}
+
+.form label{
+  font-size:13px;
+  color:var(--muted);
+}
+
+.form input,
+.form select{
+  width:100%;
+  margin-top:7px;
+  min-height:44px;
+  border:1px solid var(--line);
+  border-radius:11px;
+  background:#121119;
+  color:var(--text);
+  padding:9px 11px;
+}
+
+.form input:focus,
+.form select:focus{
+  outline:1px solid var(--accent);
+}
+
+.modal-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:8px;
+  margin-top:20px;
+}
+
+.data-box{
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:15px;
+  color:var(--muted);
+  font-size:13px;
+  margin-bottom:14px;
+}
+
+.data-box strong{
+  color:var(--text);
+}
+
+.data-buttons{
+  display:grid;
+  gap:9px;
+}
+
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:22px;
+  transform:translateX(-50%) translateY(20px);
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:13px;
+  padding:11px 16px;
+  opacity:0;
+  pointer-events:none;
+  transition:.2s;
+  z-index:20;
+}
+
+.toast.show{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+
+@media(max-width:800px){
+  .layout{
+    grid-template-columns:1fr;
+  }
+}
+
+@media(max-width:560px){
+  .app{
+    width:min(100% - 18px,1100px);
+    padding-top:10px;
+  }
+
+  .header{
+    padding:18px;
+    border-radius:20px;
+  }
+
+  .header h1{
+    font-size:25px;
+  }
+
+  .header .btn{
+    font-size:0;
+    padding:10px;
+  }
+
+  .header .btn::after{
+    content:"⚙️";
+    font-size:18px;
+  }
+
+  .panel{
+    padding:17px;
+    border-radius:20px;
+  }
+
+  .task{
+    align-items:flex-start;
+  }
+
+  .deadline{
+    display:none;
+  }
+
+  .bill-amount{
+    font-size:14px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <header class="header">
+    <div>
+      <div class="logo-small">SYREN</div>
+      <h1>遊戲生活管理器</h1>
+      <p>把遊戲活動與固定支出，都放在這裡。</p>
+    </div>
+
+    <button class="btn" id="dataButton">
+      ⚙️ 資料管理
+    </button>
+  </header>
+
+  <div class="layout">
+
+    <div class="stack">
+
+      <!-- 遊戲 -->
+      <section class="panel">
+        <div class="panel-title">
+          <div>
+            <div class="eyebrow">🎮 遊戲</div>
+            <h2>我的遊戲</h2>
+          </div>
+
+          <button class="btn primary" id="addGame">
+            ＋ 新增遊戲
+          </button>
+        </div>
+
+        <div class="games" id="games"></div>
+      </section>
+
+
+      <!-- 任務 -->
+      <section class="panel">
+
+        <div class="panel-title">
+          <div>
+            <div class="eyebrow">📋 任務</div>
+            <h2>任務中心</h2>
+          </div>
+
+          <button class="btn" id="addTask">
+            ＋ 新增任務
+          </button>
+        </div>
+
+        <div class="filters" id="filters">
+          <button class="filter active" data-filter="all">全部</button>
+          <button class="filter" data-filter="daily">每日</button>
+          <button class="filter" data-filter="weekly">每週</button>
+          <button class="filter" data-filter="monthly">每月</button>
+          <button class="filter" data-filter="version">版本</button>
+          <button class="filter" data-filter="event">限時</button>
+        </div>
+
+        <div class="tasks" id="tasks"></div>
+
+      </section>
+
+    </div>
+
+
+    <div class="stack">
+
+      <!-- 固定支出 -->
+      <section class="panel">
+
+        <div class="panel-title">
+          <div>
+            <div class="eyebrow">💳 每月固定支出</div>
+
+            <div class="money-total">
+              <small>NT$</small>
+              <strong id="total">0</strong>
+            </div>
+
+            <div class="year-total">
+              年度預估 NT$ <span id="yearTotal">0</span>
+            </div>
+          </div>
+
+          <button class="btn" id="addBill">
+            ＋ 新增
+          </button>
+        </div>
+
+        <div class="bills" id="bills"></div>
+
+      </section>
+
+
+      <!-- 最近截止 -->
+      <section class="panel">
+
+        <div class="eyebrow">⏳</div>
+        <h2>最近截止</h2>
+
+        <div class="deadlines" id="deadlines"></div>
+
+      </section>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- 一般表單 -->
+<dialog id="formDialog">
+
+  <form class="modal" id="form">
+
+    <h2 id="formTitle"></h2>
+
+    <div class="form" id="formFields"></div>
+
+    <div class="modal-actions">
+      <button type="button" class="btn" id="cancelForm">
+        取消
+      </button>
+
+      <button class="btn primary">
+        儲存
+      </button>
+    </div>
+
+  </form>
+
+</dialog>
+
+
+<!-- 資料管理 -->
+<dialog id="dataDialog">
+
+  <div class="modal">
+
+    <h2>資料管理</h2>
+
+    <div class="data-box">
+      <strong>💾 自動保存</strong>
+      <br><br>
+      Syren 會自動將資料保存於目前裝置的瀏覽器。
+      <div id="dataCount" style="margin-top:8px;"></div>
+    </div>
+
+    <div class="data-buttons">
+
+      <button class="btn" id="exportData">
+        📤 匯出備份
+      </button>
+
+      <button class="btn" id="importData">
+        📥 匯入備份
+      </button>
+
+      <input
+        id="fileInput"
+        type="file"
+        accept=".json,application/json"
+        hidden
+      >
+
+      <button class="btn danger" id="clearData">
+        🗑️ 清除全部資料
+      </button>
+
+      <button class="btn" id="closeData">
+        關閉
+      </button>
+
+    </div>
+
+  </div>
+
+</dialog>
+
+
+<div class="toast" id="toast"></div>
+
+
+<script>
+
+const STORAGE_KEY = "syren-data-v7";
+
+let data = {
+  games: [],
+  tasks: [],
+  bills: []
+};
+
+let currentFilter = "all";
+let currentGame = null;
+let editing = null;
+
+
+/* ---------- 基本工具 ---------- */
+
+function save(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+function load(){
+
+  try{
+
+    const saved = JSON.parse(
+      localStorage.getItem(STORAGE_KEY)
+    );
+
+    if(
+      saved &&
+      Array.isArray(saved.games) &&
+      Array.isArray(saved.tasks) &&
+      Array.isArray(saved.bills)
+    ){
+      data = saved;
+    }
+
+  }catch(e){
+    console.log("無法讀取資料");
+  }
+
+}
+
+function id(){
+  return Date.now() + Math.random();
+}
+
+function escapeHTML(text){
+
+  const div = document.createElement("div");
+
+  div.textContent = text ?? "";
+
+  return div.innerHTML;
+
+}
+
+function showToast(message){
+
+  const toast = document.getElementById("toast");
+
+  toast.textContent = message;
+
+  toast.classList.add("show");
+
+  setTimeout(()=>{
+    toast.classList.remove("show");
+  },1800);
+
+}
+
+
+/* ---------- 任務週期 ---------- */
+
+function cycleKey(task){
+
+  const now = new Date();
+
+  if(task.type === "daily"){
+    return "d-" +
+      now.getFullYear() + "-" +
+      (now.getMonth()+1) + "-" +
+      now.getDate();
+  }
+
+  if(task.type === "weekly"){
+
+    const d = new Date(now);
+
+    const day = d.getDay() || 7;
+
+    d.setDate(d.getDate() - day + 1);
+
+    return "w-" +
+      d.getFullYear() + "-" +
+      (d.getMonth()+1) + "-" +
+      d.getDate();
+  }
+
+  if(task.type === "monthly"){
+
+    return "m-" +
+      now.getFullYear() + "-" +
+      (now.getMonth()+1);
+
+  }
+
+  return null;
+
+}
+
+
+function refreshRecurringTasks(){
+
+  let changed = false;
+
+  data.tasks.forEach(task=>{
+
+    const key = cycleKey(task);
+
+    if(key && task.cycle !== key){
+
+      task.done = false;
+      task.cycle = key;
+
+      changed = true;
+
+    }
+
+  });
+
+  if(changed){
+    save();
+  }
+
+}
+
+
+/* ---------- 日期 ---------- */
+
+function daysUntil(dateString){
+
+  if(!dateString) return null;
+
+  const parts = dateString.split("-").map(Number);
+
+  const target = new Date(
+    parts[0],
+    parts[1]-1,
+    parts[2]
+  );
+
+  target.setHours(0,0,0,0);
+
+  const now = new Date();
+
+  now.setHours(0,0,0,0);
+
+  return Math.round(
+    (target-now)/86400000
+  );
+
+}
+
+function deadlineText(days){
+
+  if(days === null) return "";
+
+  if(days < 0) return "已截止";
+
+  if(days === 0) return "今天";
+
+  return days + " 天";
+
+}
+
+
+/* ---------- 遊戲 ---------- */
+
+function renderGames(){
+
+  const container =
+    document.getElementById("games");
+
+  let games = data.games;
+
+  if(currentGame !== null){
+    games = games.filter(
+      g => g.id === currentGame
+    );
+  }
+
+  if(!games.length){
+
+    container.innerHTML =
+      `<div class="empty">還沒有遊戲。</div>`;
+
+    return;
+  }
+
+  container.innerHTML = games.map(game=>{
+
+    const count =
+      data.tasks.filter(
+        t => t.game === game.id && !t.done
+      ).length;
+
+    return `
+      <div class="game">
+
+        <div
+          class="game-main"
+          data-open-game="${game.id}"
+        >
+          <div class="game-name">
+            ${escapeHTML(game.name)}
+          </div>
+
+          <div class="game-count">
+            ${count} 個待完成
+          </div>
+        </div>
+
+        <button
+          class="icon-btn"
+          data-edit-game="${game.id}"
+          title="編輯"
+        >✎</button>
+
+        <button
+          class="icon-btn"
+          data-delete-game="${game.id}"
+          title="刪除"
+        >×</button>
+
+      </div>
+    `;
+
+  }).join("");
+
+}
+
+
+/* ---------- 任務 ---------- */
+
+const typeNames = {
+  daily:"每日",
+  weekly:"每週",
+  monthly:"每月",
+  version:"版本",
+  event:"限時活動"
+};
+
+
+function renderTasks(){
+
+  const container =
+    document.getElementById("tasks");
+
+  let tasks = data.tasks;
+
+  if(currentGame !== null){
+
+    tasks = tasks.filter(
+      t => t.game === currentGame
+    );
+
+  }
+
+  if(currentFilter !== "all"){
+
+    tasks = tasks.filter(
+      t => t.type === currentFilter
+    );
+
+  }
+
+  if(!tasks.length){
+
+    container.innerHTML =
+      `<div class="empty">還沒有任務。</div>`;
+
+    return;
+  }
+
+  container.innerHTML = tasks.map(task=>{
+
+    const game =
+      data.games.find(
+        g => g.id === task.game
+      );
+
+    const days =
+      daysUntil(task.deadline);
+
+    let deadlineClass = "";
+
+    if(days === 0)
+      deadlineClass = "today";
+
+    if(days !== null && days < 0)
+      deadlineClass = "overdue";
+
+    return `
+      <div class="task ${task.done ? "done" : ""}">
+
+        <input
+          class="check"
+          type="checkbox"
+          data-task-check="${task.id}"
+          ${task.done ? "checked" : ""}
+        >
+
+        <div class="task-main">
+
+          <div class="task-title">
+            ${escapeHTML(task.title)}
+          </div>
+
+          <div class="task-meta">
+            ${escapeHTML(game?.name || "未分類")}
+            ·
+            ${typeNames[task.type]}
+          </div>
+
+        </div>
+
+        ${
+          days !== null
+          ?
+          `<div class="deadline ${deadlineClass}">
+             ${deadlineText(days)}
+           </div>`
+          :
+          ""
+        }
+
+        <button
+          class="icon-btn"
+          data-edit-task="${task.id}"
+        >✎</button>
+
+        <button
+          class="icon-btn"
+          data-delete-task="${task.id}"
+        >×</button>
+
+      </div>
+    `;
+
+  }).join("");
+
+}
+
+
+/* ---------- 固定支出 ---------- */
+
+function renderBills(){
+
+  const container =
+    document.getElementById("bills");
+
+  const total =
+    data.bills.reduce(
+      (sum,bill)=>sum + Number(bill.amount || 0),
+      0
+    );
+
+  document.getElementById("total")
+    .textContent =
+    total.toLocaleString("zh-TW");
+
+  document.getElementById("yearTotal")
+    .textContent =
+    (total*12).toLocaleString("zh-TW");
+
+  if(!data.bills.length){
+
+    container.innerHTML =
+      `<div class="empty">
+        還沒有固定支出。
+      </div>`;
+
+    return;
+  }
+
+  container.innerHTML =
+    data.bills.map(bill=>{
+
+      return `
+        <div class="bill">
+
+          <div class="bill-main">
+
+            <div class="bill-name">
+              ${escapeHTML(bill.name)}
+            </div>
+
+            <div class="bill-day">
+              每月 ${bill.day} 日
+            </div>
+
+          </div>
+
+          <div class="bill-amount">
+            NT$${Number(bill.amount).toLocaleString("zh-TW")}
+          </div>
+
+          <button
+            class="icon-btn"
+            data-edit-bill="${bill.id}"
+          >✎</button>
+
+          <button
+            class="icon-btn"
+            data-delete-bill="${bill.id}"
+          >×</button>
+
+        </div>
+      `;
+
+    }).join("");
+
+}
+
+
+/* ---------- 最近截止 ---------- */
+
+function renderDeadlines(){
+
+  const container =
+    document.getElementById("deadlines");
+
+  const list =
+    data.tasks
+      .filter(t => t.deadline)
+      .map(t=>({
+        ...t,
+        remaining:daysUntil(t.deadline)
+      }))
+      .filter(t => t.remaining !== null)
+      .sort((a,b)=>a.remaining-b.remaining)
+      .slice(0,5);
+
+  if(!list.length){
+
+    container.innerHTML =
+      `<div class="empty">
+        還沒有截止日期。
+      </div>`;
+
+    return;
+  }
+
+  container.innerHTML =
+    list.map(task=>{
+
+      const game =
+        data.games.find(
+          g=>g.id===task.game
+        );
+
+      return `
+        <div class="deadline-card">
+
+          <div>
+            <strong>
+              ${escapeHTML(task.title)}
+            </strong>
+
+            <small>
+              ${escapeHTML(game?.name || "未分類")}
+            </small>
+          </div>
+
+          <strong>
+            ${deadlineText(task.remaining)}
+          </strong>
+
+        </div>
+      `;
+
+    }).join("");
+
+}
+
+
+/* ---------- 全畫面更新 ---------- */
+
+function render(){
+
+  refreshRecurringTasks();
+
+  renderGames();
+  renderTasks();
+  renderBills();
+  renderDeadlines();
+
+  document
+    .querySelectorAll(".filter")
+    .forEach(button=>{
+      button.classList.toggle(
+        "active",
+        button.dataset.filter === currentFilter
+      );
+    });
+
+}
+
+
+/* ---------- 表單 ---------- */
+
+const formDialog =
+  document.getElementById("formDialog");
+
+const form =
+  document.getElementById("form");
+
+const formTitle =
+  document.getElementById("formTitle");
+
+const formFields =
+  document.getElementById("formFields");
+
+
+function inputField(
+  label,
+  name,
+  value="",
+  type="text",
+  required=false
+){
+
+  return `
+    <label>
+
+      ${label}
+
+      <input
+        name="${name}"
+        type="${type}"
+        value="${escapeHTML(value)}"
+        ${required ? "required" : ""}
+      >
+
+    </label>
+  `;
+
+}
+
+
+function openGameForm(game=null){
+
+  editing = {
+    type:"game",
+    id:game?.id ?? null
+  };
+
+  formTitle.textContent =
+    game ? "編輯遊戲" : "新增遊戲";
+
+  formFields.innerHTML =
+    inputField(
+      "遊戲名稱",
+      "name",
+      game?.name || "",
+      "text",
+      true
+    );
+
+  formDialog.showModal();
+
+}
+
+
+function openBillForm(bill=null){
+
+  editing = {
+    type:"bill",
+    id:bill?.id ?? null
+  };
+
+  formTitle.textContent =
+    bill ? "編輯固定支出" : "新增固定支出";
+
+  formFields.innerHTML =
+
+    inputField(
+      "名稱",
+      "name",
+      bill?.name || "",
+      "text",
+      true
+    )
+
+    +
+
+    inputField(
+      "每月金額",
+      "amount",
+      bill?.amount ?? "",
+      "number",
+      true
+    )
+
+    +
+
+    inputField(
+      "扣款日",
+      "day",
+      bill?.day ?? 1,
+      "number",
+      true
+    );
+
+  formDialog.showModal();
+
+}
+
+
+function openTaskForm(task=null){
+
+  if(!data.games.length){
+
+    alert("請先新增遊戲。");
+
+    return;
+  }
+
+  editing = {
+    type:"task",
+    id:task?.id ?? null
+  };
+
+  formTitle.textContent =
+    task ? "編輯任務" : "新增任務";
+
+  const options =
+    data.games.map(game=>`
+
+      <option
+        value="${game.id}"
+        ${
+          Number(task?.game ?? currentGame ?? data.games[0].id)
+          === game.id
+          ? "selected"
+          : ""
+        }
+      >
+        ${escapeHTML(game.name)}
+      </option>
+
+    `).join("");
+
+  formFields.innerHTML =
+
+    inputField(
+      "任務名稱",
+      "title",
+      task?.title || "",
+      "text",
+      true
+    )
+
+    +
+
+    `
+      <label>
+        遊戲
+
+        <select name="game">
+          ${options}
+        </select>
+
+      </label>
+    `
+
+    +
+
+    `
+      <label>
+        類型
+
+        <select name="type">
+
+          <option value="daily"
+            ${task?.type==="daily" ? "selected":""}>
+            每日
+          </option>
+
+          <option value="weekly"
+            ${task?.type==="weekly" ? "selected":""}>
+            每週
+          </option>
+
+          <option value="monthly"
+            ${task?.type==="monthly" ? "selected":""}>
+            每月
+          </option>
+
+          <option value="version"
+            ${task?.type==="version" ? "selected":""}>
+            版本
+          </option>
+
+          <option value="event"
+            ${task?.type==="event" ? "selected":""}>
+            限時活動
+          </option>
+
+        </select>
+
+      </label>
+    `
+
+    +
+
+    /*
+      這裡刻意沒有 required！
+      截止日期可以完全留空。
+    */
+
+    inputField(
+      "截止日期（選填）",
+      "deadline",
+      task?.deadline || "",
+      "date",
+      false
+    );
+
+  formDialog.showModal();
+
+}
+
+
+/* ---------- 儲存表單 ---------- */
+
+form.addEventListener("submit",event=>{
+
+  event.preventDefault();
+
+  const f =
+    new FormData(form);
+
+  if(editing.type === "game"){
+
+    const name =
+      f.get("name").trim();
+
+    if(editing.id){
+
+      const game =
+        data.games.find(
+          g=>g.id===editing.id
+        );
+
+      if(game)
+        game.name = name;
+
+    }else{
+
+      data.games.push({
+        id:id(),
+        name
+      });
+
+    }
+
+  }
+
+
+  if(editing.type === "bill"){
+
+    const billData = {
+
+      name:f.get("name").trim(),
+
+      amount:Number(f.get("amount")) || 0,
+
+      day:Math.min(
+        31,
+        Math.max(
+          1,
+          Number(f.get("day")) || 1
+        )
+      )
+
+    };
+
+    if(editing.id){
+
+      Object.assign(
+        data.bills.find(
+          b=>b.id===editing.id
+        ),
+        billData
+      );
+
+    }else{
+
+      data.bills.push({
+        id:id(),
+        ...billData
+      });
+
+    }
+
+  }
+
+
+  if(editing.type === "task"){
+
+    const taskData = {
+
+      title:f.get("title").trim(),
+
+      game:Number(f.get("game")),
+
+      type:f.get("type"),
+
+      /*
+        空白就存成空字串。
+        不會強迫使用者填日期。
+      */
+      deadline:f.get("deadline") || ""
+
+    };
+
+    if(editing.id){
+
+      Object.assign(
+        data.tasks.find(
+          t=>t.id===editing.id
+        ),
+        taskData
+      );
+
+    }else{
+
+      data.tasks.push({
+        id:id(),
+        ...taskData,
+        done:false,
+        cycle:null
+      });
+
+    }
+
+  }
+
+  save();
+
+  formDialog.close();
+
+  render();
+
+  showToast("已儲存");
+
+});
+
+
+document
+  .getElementById("cancelForm")
+  .onclick=()=>{
+    formDialog.close();
+  };
+
+
+/* ---------- 新增按鈕 ---------- */
+
+document
+  .getElementById("addGame")
+  .onclick=()=>{
+    openGameForm();
+  };
+
+document
+  .getElementById("addTask")
+  .onclick=()=>{
+    openTaskForm();
+  };
+
+document
+  .getElementById("addBill")
+  .onclick=()=>{
+    openBillForm();
+  };
+
+
+/* ---------- 篩選 ---------- */
+
+document
+  .getElementById("filters")
+  .addEventListener("click",event=>{
+
+    const button =
+      event.target.closest(".filter");
+
+    if(!button) return;
+
+    currentFilter =
+      button.dataset.filter;
+
+    render();
+
+  });
+
+
+/* ---------- 遊戲／任務／支出事件 ---------- */
+
+document.addEventListener("click",event=>{
+
+  const openGame =
+    event.target.closest("[data-open-game]");
+
+  if(openGame){
+
+    currentGame =
+      Number(openGame.dataset.openGame);
+
+    render();
+
+    return;
+  }
+
+
+  const editGame =
+    event.target.closest("[data-edit-game]");
+
+  if(editGame){
+
+    const game =
+      data.games.find(
+        g=>g.id===Number(editGame.dataset.editGame)
+      );
+
+    openGameForm(game);
+
+    return;
+  }
+
+
+  const deleteGame =
+    event.target.closest("[data-delete-game]");
+
+  if(deleteGame){
+
+    const gameId =
+      Number(deleteGame.dataset.deleteGame);
+
+    if(confirm("刪除這個遊戲及其所有任務？")){
+
+      data.games =
+        data.games.filter(
+          g=>g.id!==gameId
+        );
+
+      data.tasks =
+        data.tasks.filter(
+          t=>t.game!==gameId
+        );
+
+      currentGame=null;
+
+      save();
+      render();
+
+    }
+
+    return;
+  }
+
+
+  const editTask =
+    event.target.closest("[data-edit-task]");
+
+  if(editTask){
+
+    const task =
+      data.tasks.find(
+        t=>t.id===Number(editTask.dataset.editTask)
+      );
+
+    openTaskForm(task);
+
+    return;
+  }
+
+
+  const deleteTask =
+    event.target.closest("[data-delete-task]");
+
+  if(deleteTask){
+
+    const taskId =
+      Number(deleteTask.dataset.deleteTask);
+
+    if(confirm("刪除這個任務？")){
+
+      data.tasks =
+        data.tasks.filter(
+          t=>t.id!==taskId
+        );
+
+      save();
+      render();
+
+    }
+
+    return;
+  }
+
+
+  const editBill =
+    event.target.closest("[data-edit-bill]");
+
+  if(editBill){
+
+    const bill =
+      data.bills.find(
+        b=>b.id===Number(editBill.dataset.editBill)
+      );
+
+    openBillForm(bill);
+
+    return;
+  }
+
+
+  const deleteBill =
+    event.target.closest("[data-delete-bill]");
+
+  if(deleteBill){
+
+    const billId =
+      Number(deleteBill.dataset.deleteBill);
+
+    if(confirm("刪除這筆固定支出？")){
+
+      data.bills =
+        data.bills.filter(
+          b=>b.id!==billId
+        );
+
+      save();
+      render();
+
+    }
+
+  }
+
+});
+
+
+/* ---------- Checkbox ---------- */
+
+document.addEventListener("change",event=>{
+
+  const checkbox =
+    event.target.closest("[data-task-check]");
+
+  if(!checkbox) return;
+
+  const task =
+    data.tasks.find(
+      t=>t.id===Number(
+        checkbox.dataset.taskCheck
+      )
+    );
+
+  if(!task) return;
+
+  task.done =
+    checkbox.checked;
+
+  /*
+    紀錄目前週期。
+    下一個週期會自動重置。
+  */
+
+  task.cycle =
+    cycleKey(task);
+
+  save();
+
+  render();
+
+});
+
+
+/* ---------- 資料管理 ---------- */
+
+const dataDialog =
+  document.getElementById("dataDialog");
+
+
+document
+  .getElementById("dataButton")
+  .onclick=()=>{
+
+    document.getElementById("dataCount")
+      .textContent =
+      `目前：${data.games.length} 款遊戲・`+
+      `${data.tasks.length} 個任務・`+
+      `${data.bills.length} 筆固定支出`;
+
+    dataDialog.showModal();
+
+  };
+
+
+document
+  .getElementById("closeData")
+  .onclick=()=>{
+    dataDialog.close();
+  };
+
+
+/* ---------- 匯出 ---------- */
+
+document
+  .getElementById("exportData")
+  .onclick=()=>{
+
+    const backup = {
+
+      app:"Syren",
+
+      version:7,
+
+      exportedAt:
+        new Date().toISOString(),
+
+      data:data
+
+    };
+
+    const blob =
+      new Blob(
+        [
+          JSON.stringify(
+            backup,
+            null,
+            2
+          )
+        ],
+        {
+          type:"application/json"
+        }
+      );
+
+    const url =
+      URL.createObjectURL(blob);
+
+    const a =
+      document.createElement("a");
+
+    a.href=url;
+
+    a.download="Syren-backup.json";
+
+    document.body.appendChild(a);
+
+    a.click();
+
+    a.remove();
+
+    setTimeout(()=>{
+      URL.revokeObjectURL(url);
+    },1000);
+
+    showToast("備份已匯出");
+
+  };
+
+
+/* ---------- 匯入 ---------- */
+
+document
+  .getElementById("importData")
+  .onclick=()=>{
+
+    document
+      .getElementById("fileInput")
+      .click();
+
+  };
+
+
+document
+  .getElementById("fileInput")
+  .addEventListener("change",event=>{
+
+    const file =
+      event.target.files[0];
+
+    if(!file) return;
+
+    const reader =
+      new FileReader();
+
+    reader.onload=()=>{
+
+      try{
+
+        const backup =
+          JSON.parse(reader.result);
+
+        const imported =
+          backup.data || backup;
+
+        if(
+          !Array.isArray(imported.games) ||
+          !Array.isArray(imported.tasks) ||
+          !Array.isArray(imported.bills)
+        ){
+          throw new Error();
+        }
+
+        if(
+          !confirm(
+            "匯入後會取代目前 Syren 的資料，確定嗎？"
+          )
+        ){
+          return;
+        }
+
+        data = imported;
+
+        currentGame=null;
+
+        currentFilter="all";
+
+        save();
+
+        render();
+
+        dataDialog.close();
+
+        showToast("資料已還原");
+
+      }catch(e){
+
+        alert(
+          "這不是有效的 Syren 備份檔。"
+        );
+
+      }
+
+      event.target.value="";
+
+    };
+
+    reader.readAsText(file);
+
+  });
+
+
+/* ---------- 清除 ---------- */
+
+document
+  .getElementById("clearData")
+  .onclick=()=>{
+
+    if(!confirm(
+      "確定要清除全部 Syren 資料嗎？"
+    )){
+      return;
+    }
+
+    if(!confirm(
+      "遊戲、任務、固定支出都會被刪除，確定繼續？"
+    )){
+      return;
+    }
+
+    data={
+      games:[],
+      tasks:[],
+      bills:[]
+    };
+
+    currentGame=null;
+
+    save();
+
+    render();
+
+    dataDialog.close();
+
+    showToast("資料已清除");
+
+  };
+
+
+/* ---------- 啟動 ---------- */
+
+load();
+
+render();
+
+</script>
+
+</body>
+</html>
