@@ -186,6 +186,8 @@ main,aside{min-width:0}
   z-index:10;
 }
 .modal.show{display:flex}
+#gameModal,#taskModal,#expenseModal{z-index:20}
+#dataModal{z-index:10}
 .dialog{
   width:min(560px,100%);
   max-height:90vh;
@@ -225,7 +227,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--purple)}
   padding:10px 0;
   border-bottom:1px solid #292536;
 }
-.manage-item span{min-width:0;overflow-wrap:anywhere}
+.manage-item span{min-width:0;overflow-wrap:anywhere}.manage-item .actions-inline{flex-wrap:wrap}
 footer{text-align:center;color:#70697e;font-size:12px;margin-top:12px}
 
 @media(max-width:900px){
@@ -316,26 +318,26 @@ footer{text-align:center;color:#70697e;font-size:12px;margin-top:12px}
 </div>
 
 <div class="modal" id="gameModal"><div class="dialog">
-<h2>新增遊戲</h2><form class="form" onsubmit="saveGame(event)">
-<div class="field"><label>遊戲名稱</label><input id="gameName" required placeholder="例如：戀與深空"></div>
-<div class="actions"><button type="button" class="btn" onclick="closeModals()">取消</button><button class="btn primary">新增</button></div></form></div></div>
+<h2 id="gameModalTitle">新增遊戲</h2><form class="form" onsubmit="saveGame(event)">
+<div class="field"><label>遊戲名稱</label><input id="gameName" required placeholder="例如：戀與深空"><input id="editGameId" type="hidden"></div>
+<div class="actions"><button type="button" class="btn" onclick="closeModals()">取消</button><button id="gameSubmitBtn" type="submit" class="btn primary">新增</button></div></form></div></div>
 
 <div class="modal" id="taskModal"><div class="dialog">
-<h2>新增任務</h2><form class="form" onsubmit="saveTask(event)">
+<h2 id="taskModalTitle">新增任務</h2><form class="form" onsubmit="saveTask(event)">
 <div class="field"><label>任務名稱</label><input id="taskName" required placeholder="例如：每日登入"></div>
 <div class="row">
 <div class="field"><label>遊戲</label><select id="taskGame" required></select></div>
 <div class="field"><label>類型</label><select id="taskType"><option value="daily">每日</option><option value="weekly">每週</option><option value="monthly">每月</option><option value="version">版本</option><option value="limited">限時</option></select></div>
 </div>
 <div class="field"><label>截止日期（可留空）</label><input id="taskDue" type="date"></div>
-<div class="field"><label>備註</label><textarea id="taskNote" rows="3" placeholder="可填活動版本、時間或其他提醒"></textarea></div>
+<div class="field"><label>備註</label><textarea id="taskNote" rows="3" placeholder="可填活動版本、時間或其他提醒"></textarea><input id="editTaskId" type="hidden"></div>
 <div class="actions"><button type="button" class="btn" onclick="closeModals()">取消</button><button class="btn primary">新增任務</button></div></form></div></div>
 
 <div class="modal" id="expenseModal"><div class="dialog">
-<h2>新增固定支出</h2><form class="form" onsubmit="saveExpense(event)">
-<div class="field"><label>項目名稱</label><input id="expenseName" required placeholder="例如：YouTube Premium"></div>
+<h2 id="expenseModalTitle">新增固定支出</h2><form class="form" onsubmit="saveExpense(event)">
+<div class="field"><label>項目名稱</label><input id="expenseName" required placeholder="例如：YouTube Premium"><input id="editExpenseId" type="hidden"></div>
 <div class="row"><div class="field"><label>每月金額</label><input id="expenseAmount" type="number" min="0" required placeholder="0"></div><div class="field"><label>扣款日（可留空）</label><input id="expenseDay" type="number" min="1" max="31" placeholder="例如 15"></div></div>
-<div class="actions"><button type="button" class="btn" onclick="closeModals()">取消</button><button class="btn primary">新增</button></div></form></div></div>
+<div class="actions"><button type="button" class="btn" onclick="closeModals()">取消</button><button id="expenseSubmitBtn" type="submit" class="btn primary">新增</button></div></form></div></div>
 
 <div class="modal" id="dataModal"><div class="dialog">
 <h2>資料管理</h2><p class="sub">資料會自動儲存在瀏覽器。換手機前建議先匯出備份。</p>
@@ -346,7 +348,7 @@ footer{text-align:center;color:#70697e;font-size:12px;margin-top:12px}
 </div>
 <hr style="border-color:#292536;margin:20px 0">
 <div id="manageGames" class="manage-list"></div>
-<div class="actions"><button class="btn" onclick="closeModals()">關閉</button></div>
+<div class="actions"><button type="button" class="btn" onclick="clearAllData()">清空全部資料</button><button class="btn" onclick="closeModals()">關閉</button></div>
 </div></div>
 
 <script>
@@ -357,18 +359,26 @@ let selectedGame='all', selectedType='all';
 function persist(){localStorage.setItem(KEY,JSON.stringify(data));render()}
 function esc(s=''){return s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 function money(n){return 'NT$ '+Number(n||0).toLocaleString('zh-TW')}
-function openModal(id){if(id==='taskModal') fillGameSelect(); if(id==='dataModal') renderManage();document.getElementById(id).classList.add('show')}
+function openModal(id){
+  if(id==='gameModal') resetGameForm();
+  if(id==='taskModal'){resetTaskForm();fillGameSelect();}
+  if(id==='expenseModal') resetExpenseForm();
+  if(id==='dataModal') renderManage();
+  document.getElementById(id).classList.add('show')
+}
 function closeModals(){document.querySelectorAll('.modal').forEach(x=>x.classList.remove('show'))}
 document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('show')}));
 
-function saveGame(e){e.preventDefault();data.games.push({id:crypto.randomUUID(),name:document.getElementById('gameName').value.trim()});e.target.reset();closeModals();persist()}
+function resetGameForm(){document.getElementById('gameModalTitle').textContent='新增遊戲';document.getElementById('gameSubmitBtn').textContent='新增';document.getElementById('gameName').value='';document.getElementById('editGameId').value=''}
+function editGame(id){const g=data.games.find(x=>x.id===id);if(!g)return;document.getElementById('dataModal').classList.remove('show');document.getElementById('gameModalTitle').textContent='編輯遊戲';document.getElementById('gameSubmitBtn').textContent='儲存修改';document.getElementById('gameName').value=g.name;document.getElementById('editGameId').value=g.id;document.getElementById('gameModal').classList.add('show');setTimeout(()=>document.getElementById('gameName').focus(),50)}
+function saveGame(e){e.preventDefault();const id=document.getElementById('editGameId').value,name=document.getElementById('gameName').value.trim();if(!name)return;if(id){const g=data.games.find(x=>x.id===id);if(g)g.name=name}else data.games.push({id:crypto.randomUUID(),name});e.target.reset();closeModals();persist()}
 function fillGameSelect(){const s=document.getElementById('taskGame');s.innerHTML=data.games.length?data.games.map(g=>`<option value="${g.id}">${esc(g.name)}</option>`).join(''):'<option value="">請先新增遊戲</option>'}
-function saveTask(e){
- e.preventDefault();if(!data.games.length){alert('請先新增遊戲');return}
- data.tasks.push({id:crypto.randomUUID(),name:document.getElementById('taskName').value.trim(),gameId:document.getElementById('taskGame').value,type:document.getElementById('taskType').value,due:document.getElementById('taskDue').value,note:document.getElementById('taskNote').value.trim(),done:{}});
- e.target.reset();closeModals();persist()
-}
-function saveExpense(e){e.preventDefault();data.expenses.push({id:crypto.randomUUID(),name:document.getElementById('expenseName').value.trim(),amount:+document.getElementById('expenseAmount').value,day:document.getElementById('expenseDay').value});e.target.reset();closeModals();persist()}
+function resetTaskForm(){document.getElementById('taskModalTitle').textContent='新增任務';document.getElementById('taskName').value='';document.getElementById('taskDue').value='';document.getElementById('taskNote').value='';document.getElementById('editTaskId').value='';document.getElementById('taskType').value='daily'}
+function editTask(id){const t=data.tasks.find(x=>x.id===id);if(!t)return;fillGameSelect();document.getElementById('taskModalTitle').textContent='編輯任務';document.getElementById('taskName').value=t.name;document.getElementById('taskGame').value=t.gameId;document.getElementById('taskType').value=t.type;document.getElementById('taskDue').value=t.due||'';document.getElementById('taskNote').value=t.note||'';document.getElementById('editTaskId').value=t.id;document.getElementById('taskModal').classList.add('show')}
+function saveTask(e){e.preventDefault();if(!data.games.length){alert('請先新增遊戲');return}const id=document.getElementById('editTaskId').value,payload={name:document.getElementById('taskName').value.trim(),gameId:document.getElementById('taskGame').value,type:document.getElementById('taskType').value,due:document.getElementById('taskDue').value,note:document.getElementById('taskNote').value.trim()};if(!payload.name)return;if(id){const t=data.tasks.find(x=>x.id===id);if(t)Object.assign(t,payload)}else data.tasks.push({...payload,id:crypto.randomUUID(),done:{}});e.target.reset();closeModals();persist()}
+function resetExpenseForm(){document.getElementById('expenseModalTitle').textContent='新增固定支出';document.getElementById('expenseSubmitBtn').textContent='新增';document.getElementById('expenseName').value='';document.getElementById('expenseAmount').value='';document.getElementById('expenseDay').value='';document.getElementById('editExpenseId').value=''}
+function editExpense(id){const x=data.expenses.find(e=>e.id===id);if(!x)return;document.getElementById('expenseModalTitle').textContent='編輯固定支出';document.getElementById('expenseSubmitBtn').textContent='儲存修改';document.getElementById('expenseName').value=x.name;document.getElementById('expenseAmount').value=x.amount;document.getElementById('expenseDay').value=x.day||'';document.getElementById('editExpenseId').value=x.id;document.getElementById('expenseModal').classList.add('show')}
+function saveExpense(e){e.preventDefault();const id=document.getElementById('editExpenseId').value,payload={name:document.getElementById('expenseName').value.trim(),amount:+document.getElementById('expenseAmount').value,day:document.getElementById('expenseDay').value};if(!payload.name)return;if(id){const x=data.expenses.find(e=>e.id===id);if(x)Object.assign(x,payload)}else data.expenses.push({...payload,id:crypto.randomUUID()});e.target.reset();closeModals();persist()}
 
 function periodKey(t){
  const d=new Date(), y=d.getFullYear(), m=d.getMonth()+1;
@@ -382,14 +392,39 @@ function toggleTask(id){
  if(t.type==='limited'||t.type==='version'){t.done[k]=!t.done[k]}else t.done[k]=!t.done[k];
  persist()
 }
-function deleteTask(id){if(confirm('確定要刪除這個任務嗎？')){data.tasks=data.tasks.filter(x=>x.id!==id);persist()}}
-function deleteExpense(id){if(confirm('確定要刪除這筆固定支出嗎？')){data.expenses=data.expenses.filter(x=>x.id!==id);persist()}}
 function deleteGame(id){
- if(confirm('刪除遊戲也會刪除它的任務，確定嗎？')){data.games=data.games.filter(x=>x.id!==id);data.tasks=data.tasks.filter(x=>x.gameId!==id);if(selectedGame===id)selectedGame='all';persist()}
+ const g=data.games.find(x=>x.id===id);
+ if(!g)return;
+ if(!window.confirm('確定要刪除「'+g.name+'」嗎？\n\n與這個遊戲相關的任務也會一併刪除。'))return;
+ data.games=data.games.filter(x=>x.id!==id);
+ data.tasks=data.tasks.filter(x=>x.gameId!==id);
+ if(selectedGame===id)selectedGame='all';
+ persist();
+ render();
+ renderManage();
+}
+function deleteTask(id){
+ const t=data.tasks.find(x=>x.id===id); if(!t)return;
+ if(!confirm(`確定要刪除任務「${t.name}」嗎？`))return;
+ data.tasks=data.tasks.filter(x=>x.id!==id);
+ persist(); render(); renderManage();
 }
 function gameName(id){return data.games.find(g=>g.id===id)?.name||'未分類'}
 const typeName={daily:'每日',weekly:'每週',monthly:'每月',version:'版本',limited:'限時'};
 
+function clearAllData(){
+ if(!confirm('確定要清空所有遊戲、任務與固定支出嗎？此操作無法復原，建議先匯出備份。'))return;
+ data={games:[],tasks:[],expenses:[]};
+ selectedGame='all'; selectedType='all';
+ persist(); render(); renderManage();
+ alert('已清空全部資料。');
+}
+function deleteExpense(id){
+ const x=data.expenses.find(e=>e.id===id); if(!x)return;
+ if(!confirm(`確定要刪除固定支出「${x.name}」嗎？`))return;
+ data.expenses=data.expenses.filter(e=>e.id!==id);
+ persist(); render(); renderManage();
+}
 function render(){
  const games=document.getElementById('games');
  games.innerHTML=data.games.length?data.games.map(g=>`<button class="btn game ${selectedGame===g.id?'active':''}" onclick="selectGame('${g.id}')">🎮 ${esc(g.name)}</button>`).join(''):'<div class="empty" style="width:100%">還沒有遊戲。新增一個開始吧！</div>';
@@ -404,19 +439,19 @@ function render(){
    <div class="task-content"><div class="taskname">${esc(t.name)}</div>
    <div class="meta">🎮 ${esc(gameName(t.gameId))}　·　${typeName[t.type]}${t.due?'　·　截止 '+esc(t.due):''}${late?'　<span class="danger">已逾期</span>':''}</div>
    ${t.note?`<div class="meta">${esc(t.note)}</div>`:''}</div>
-   <button class="btn small" onclick="deleteTask('${t.id}')">刪除</button></div>`
+   <div class="actions-inline"><button type="button" class="btn small" onclick="editTask('${t.id}')">編輯</button><button type="button" class="btn small" onclick="deleteTask('${t.id}')">刪除</button></div></div>`
  }).join(''):'<div class="empty">還沒有符合條件的任務。</div>';
 
  const total=data.expenses.reduce((s,x)=>s+Number(x.amount||0),0);
  document.getElementById('total').textContent=money(total);document.getElementById('annual').textContent='年度預估 '+money(total*12);
- document.getElementById('expenses').innerHTML=data.expenses.length?data.expenses.map(x=>`<div class="expense"><div><b>${esc(x.name)}</b><div class="meta">${x.day?'每月 '+x.day+' 日扣款':'每月固定'}</div></div><div><b>${money(x.amount)}</b> <button class="btn small" onclick="deleteExpense('${x.id}')">刪除</button></div></div>`).join(''):'<div class="empty" style="margin-top:18px">還沒有固定支出。</div>';
+ document.getElementById('expenses').innerHTML=data.expenses.length?data.expenses.map(x=>`<div class="expense"><div><b>${esc(x.name)}</b><div class="meta">${x.day?'每月 '+x.day+' 日扣款':'每月固定'}</div></div><div><b>${money(x.amount)}</b><div class="actions-inline"><button type="button" class="btn small" onclick="editExpense('${x.id}')">編輯</button><button type="button" class="btn small" onclick="deleteExpense('${x.id}')">刪除</button></div></div>`).join(''):'<div class="empty" style="margin-top:18px">還沒有固定支出。</div>';
 
  const future=data.tasks.filter(t=>t.due&&!t.done[periodKey(t)]).sort((a,b)=>a.due.localeCompare(b.due)).slice(0,5);
  document.getElementById('deadlines').innerHTML=future.length?future.map(t=>`<div class="expense"><div><b>${esc(t.name)}</b><div class="meta">${esc(gameName(t.gameId))}</div></div><span>${esc(t.due)}</span></div>`).join(''):'<div class="empty">還沒有截止日期。</div>';
 }
 function selectGame(id){selectedGame=selectedGame===id?'all':id;render();document.getElementById('taskSection').scrollIntoView({behavior:'smooth',block:'start'})}
 function selectType(k){selectedType=k;render()}
-function renderManage(){document.getElementById('manageGames').innerHTML=data.games.length?data.games.map(g=>`<div class="manage-item"><span>🎮 ${esc(g.name)}</span><button class="btn small" onclick="deleteGame('${g.id}')">刪除遊戲</button></div>`).join(''):'<div class="empty">還沒有遊戲。</div>'}
+function renderManage(){document.getElementById('manageGames').innerHTML=data.games.length?data.games.map(g=>`<div class="manage-item"><span>🎮 ${esc(g.name)}</span><div class="actions-inline"><button type="button" class="btn small" onclick="editGame('${g.id}')">編輯</button><button type="button" class="btn small" onclick="deleteGame('${g.id}')">刪除</button></div></div>`).join(''):'<div class="empty">還沒有遊戲。</div>'}
 function exportData(){const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Syren-備份.json';a.click();URL.revokeObjectURL(a.href)}
 function importData(e){
  const f=e.target.files[0];if(!f)return;const r=new FileReader();
