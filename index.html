@@ -1,3 +1,4 @@
+<!-- Syren v10 Final fixed6: expense layout fix -->
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -165,8 +166,8 @@ main,aside{min-width:0}
 .expense-total{font-size:35px;line-height:1.1;font-weight:850;margin:8px 0}
 .expense{
   display:grid;
-  grid-template-columns:minmax(0,1fr) auto;
-  gap:12px;
+  grid-template-columns:minmax(0,1fr) minmax(145px,auto);
+  gap:14px;
   align-items:center;
   padding:12px 0;
   border-bottom:1px solid #292536;
@@ -174,7 +175,28 @@ main,aside{min-width:0}
 }
 .expense:last-child{border:0}
 .expense>div{min-width:0}
-.expense b{overflow-wrap:anywhere}
+.expense b{
+  overflow-wrap:anywhere;
+  word-break:normal;
+}
+.expense-side{
+  min-width:145px;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:6px;
+}
+.expense-amount{
+  white-space:nowrap;
+  overflow-wrap:normal!important;
+  word-break:keep-all;
+}
+.actions-inline{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
 .modal{
   position:fixed;
   inset:0;
@@ -268,7 +290,19 @@ footer{text-align:center;color:#70697e;font-size:12px;margin-top:12px}
   .taskname{font-size:16px}
   .meta{font-size:12px}
   .expense-total{font-size:30px}
-  .expense{gap:9px}
+  .expense{
+    grid-template-columns:minmax(0,1fr);
+    gap:8px;
+  }
+  .expense-side{
+    min-width:0;
+    width:100%;
+    flex-direction:row;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+  }
+  .actions-inline{justify-content:flex-end}
   .row{grid-template-columns:1fr}
   .dialog{padding:19px;border-radius:20px}
 }
@@ -444,7 +478,7 @@ function render(){
 
  const total=data.expenses.reduce((s,x)=>s+Number(x.amount||0),0);
  document.getElementById('total').textContent=money(total);document.getElementById('annual').textContent='年度預估 '+money(total*12);
- document.getElementById('expenses').innerHTML=data.expenses.length?data.expenses.map(x=>`<div class="expense"><div><b>${esc(x.name)}</b><div class="meta">${x.day?'每月 '+x.day+' 日扣款':'每月固定'}</div></div><div><b>${money(x.amount)}</b><div class="actions-inline"><button type="button" class="btn small" onclick="editExpense('${x.id}')">編輯</button><button type="button" class="btn small" onclick="deleteExpense('${x.id}')">刪除</button></div></div>`).join(''):'<div class="empty" style="margin-top:18px">還沒有固定支出。</div>';
+ document.getElementById('expenses').innerHTML=data.expenses.length?data.expenses.map(x=>`<div class="expense"><div><b>${esc(x.name)}</b><div class="meta">${x.day?'每月 '+x.day+' 日扣款':'每月固定'}</div></div><div class="expense-side"><b class="expense-amount">${money(x.amount)}</b><div class="actions-inline"><button type="button" class="btn small" onclick="editExpense('${x.id}')">編輯</button><button type="button" class="btn small" onclick="deleteExpense('${x.id}')">刪除</button></div></div></div>`).join(''):'<div class="empty" style="margin-top:18px">還沒有固定支出。</div>';
 
  const future=data.tasks.filter(t=>t.due&&!t.done[periodKey(t)]).sort((a,b)=>a.due.localeCompare(b.due)).slice(0,5);
  document.getElementById('deadlines').innerHTML=future.length?future.map(t=>`<div class="expense"><div><b>${esc(t.name)}</b><div class="meta">${esc(gameName(t.gameId))}</div></div><span>${esc(t.due)}</span></div>`).join(''):'<div class="empty">還沒有截止日期。</div>';
