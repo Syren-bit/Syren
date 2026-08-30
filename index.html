@@ -417,7 +417,7 @@ function saveExpense(e){e.preventDefault();const id=document.getElementById('edi
 function periodKey(t){
  const d=new Date(), y=d.getFullYear(), m=d.getMonth()+1;
  if(t.type==='daily') return `${y}-${m}-${d.getDate()}`;
- if(t.type==='weekly'){const x=new Date(d);x.setHours(0,0,0,0);x.setDate(x.getDate()-x.getDay());return 'w-'+x.toISOString().slice(0,10)}
+ if(t.type==='weekly'){const x=new Date(d);x.setHours(0,0,0,0);x.setDate(x.getDate()-((x.getDay()+6)%7));return 'w-'+x.toISOString().slice(0,10)}
  if(t.type==='monthly') return `${y}-${m}`;
  return 'once';
 }
