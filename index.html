@@ -11,35 +11,273 @@
   --text:#f5f1ff;--muted:#aaa1bf;--purple:#b99aff;--purple2:#8f70df;
   --danger:#ff829d;--ok:#8fdfc0;--shadow:0 12px 35px #0004;
 }
-*{box-sizing:border-box} body{margin:0;background:radial-gradient(circle at 15% 0,#29213c 0,#100e18 38%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC","Segoe UI",sans-serif}
-button,input,select,textarea{font:inherit} button{cursor:pointer}
-.app{max-width:1120px;margin:auto;padding:28px 22px 60px}
-header,.card{background:linear-gradient(145deg,#191724,#15131f);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow)}
-header{padding:25px 28px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;gap:18px}
-.eyebrow{font-size:11px;letter-spacing:4px;color:#c7b5ef}.title{font-size:29px;font-weight:800;margin:5px 0}.sub{color:var(--muted);font-size:14px}
-.grid{display:grid;grid-template-columns:1.15fr .85fr;gap:20px}.card{padding:23px;margin-bottom:20px}
-.card h2{font-size:21px;margin:7px 0 16px}.label{font-size:13px;color:var(--muted)}
-.topline{display:flex;justify-content:space-between;align-items:center;gap:10px}.icon{margin-right:7px}
-.btn{border:1px solid var(--line);background:#191624;color:var(--text);padding:10px 15px;border-radius:13px}
-.btn:hover{border-color:#7661a5}.primary{background:var(--purple);color:#171321;border-color:transparent;font-weight:800}.small{padding:7px 10px;font-size:13px}
-.games{display:flex;gap:10px;overflow-x:auto;padding:3px 0 9px;scrollbar-width:none}.games::-webkit-scrollbar,.filters::-webkit-scrollbar{display:none}
-.game{min-width:125px;text-align:left}.game.active{background:#8f70df;color:white;border-color:#b99aff}
-.empty{border:1px dashed var(--line);padding:20px;border-radius:16px;text-align:center;color:var(--muted)}
-.filters{display:flex;gap:7px;overflow-x:auto;padding-bottom:7px;scrollbar-width:none}.chip{white-space:nowrap;border:1px solid var(--line);background:transparent;color:#c8bfda;padding:8px 12px;border-radius:12px}.chip.active{border-color:var(--purple);color:white;background:#2a2140}
-.task{display:flex;align-items:flex-start;gap:12px;padding:13px 2px;border-bottom:1px solid #292536}.task:last-child{border-bottom:0}
-.check{width:21px;height:21px;accent-color:var(--purple);margin-top:2px}.task.done .taskname{text-decoration:line-through;color:#82798f}.taskname{font-weight:700}.meta{font-size:12px;color:var(--muted);margin-top:4px}.danger{color:var(--danger)}.ok{color:var(--ok)}
-.expense-total{font-size:35px;font-weight:850;margin:8px 0}.expense{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #292536}.expense:last-child{border:0}
-.modal{position:fixed;inset:0;background:#08070db8;display:none;align-items:center;justify-content:center;padding:18px;z-index:10}.modal.show{display:flex}.dialog{width:min(560px,100%);max-height:90vh;overflow:auto;background:#191724;border:1px solid var(--line);border-radius:22px;padding:22px}
-.form{display:grid;gap:12px}.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:grid;gap:6px}.field label{font-size:13px;color:var(--muted)}input,select,textarea{width:100%;background:#11101a;border:1px solid var(--line);color:var(--text);border-radius:11px;padding:11px 12px;outline:none}input:focus,select:focus,textarea:focus{border-color:var(--purple)}
-.actions{display:flex;justify-content:flex-end;gap:9px;margin-top:6px}.hidden{display:none!important}
-.manage-list{display:grid;gap:8px}.manage-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #292536}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:radial-gradient(circle at 15% 0,#29213c 0,#100e18 38%);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC","Segoe UI",sans-serif;
+  min-height:100vh;
+}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.app{
+  width:min(1180px,100%);
+  margin:0 auto;
+  padding:28px 24px 60px;
+}
+header,.card{
+  background:linear-gradient(145deg,#191724,#15131f);
+  border:1px solid var(--line);
+  border-radius:24px;
+  box-shadow:var(--shadow);
+}
+header{
+  padding:25px 28px;
+  margin-bottom:20px;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:center;
+  gap:20px;
+}
+.eyebrow{font-size:11px;letter-spacing:4px;color:#c7b5ef}
+.title{font-size:29px;line-height:1.25;font-weight:800;margin:5px 0}
+.sub{color:var(--muted);font-size:14px;line-height:1.6}
+.grid{
+  display:grid;
+  grid-template-columns:minmax(0,1.08fr) minmax(340px,.92fr);
+  gap:20px;
+  align-items:start;
+}
+main,aside{min-width:0}
+.card{
+  padding:23px;
+  margin-bottom:20px;
+  min-width:0;
+}
+.card h2{
+  font-size:21px;
+  line-height:1.3;
+  margin:7px 0 16px;
+}
+.label{font-size:13px;color:var(--muted);line-height:1.4}
+.topline{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:14px;
+  min-width:0;
+}
+.topline>div{min-width:0}
+.topline .btn{flex:0 0 auto}
+.icon{margin-right:7px}
+.btn{
+  border:1px solid var(--line);
+  background:#191624;
+  color:var(--text);
+  padding:10px 15px;
+  border-radius:13px;
+  white-space:nowrap;
+  transition:border-color .15s,transform .15s,background .15s;
+}
+.btn:hover{border-color:#7661a5}
+.btn:active{transform:translateY(1px)}
+.primary{
+  background:var(--purple);
+  color:#171321;
+  border-color:transparent;
+  font-weight:800;
+}
+.small{padding:7px 10px;font-size:13px}
+.games{
+  display:flex;
+  gap:10px;
+  overflow-x:auto;
+  padding:3px 0 9px;
+  scrollbar-width:none;
+  min-width:0;
+}
+.games::-webkit-scrollbar,.filters::-webkit-scrollbar{display:none}
+.game{
+  min-width:125px;
+  text-align:left;
+  flex:0 0 auto;
+}
+.game.active{background:#8f70df;color:white;border-color:#b99aff}
+.empty{
+  border:1px dashed var(--line);
+  padding:20px;
+  border-radius:16px;
+  text-align:center;
+  color:var(--muted);
+}
+.filters{
+  display:flex;
+  gap:7px;
+  overflow-x:auto;
+  padding:0 0 9px;
+  scrollbar-width:none;
+  min-width:0;
+}
+.chip{
+  white-space:nowrap;
+  flex:0 0 auto;
+  border:1px solid var(--line);
+  background:transparent;
+  color:#c8bfda;
+  padding:8px 12px;
+  border-radius:12px;
+}
+.chip.active{border-color:var(--purple);color:white;background:#2a2140}
+.task{
+  display:grid;
+  grid-template-columns:21px minmax(0,1fr) auto;
+  align-items:center;
+  gap:12px;
+  padding:13px 2px;
+  border-bottom:1px solid #292536;
+  min-width:0;
+}
+.task:last-child{border-bottom:0}
+.task .check{
+  width:21px;
+  height:21px;
+  margin:0;
+  accent-color:var(--purple);
+}
+.task .task-content{min-width:0}
+.task.done .taskname{text-decoration:line-through;color:#82798f}
+.taskname{
+  font-weight:700;
+  line-height:1.45;
+  overflow-wrap:anywhere;
+}
+.meta{
+  font-size:12px;
+  color:var(--muted);
+  margin-top:4px;
+  line-height:1.55;
+  overflow-wrap:anywhere;
+}
+.danger{color:var(--danger)}
+.ok{color:var(--ok)}
+.expense-total{font-size:35px;line-height:1.1;font-weight:850;margin:8px 0}
+.expense{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:12px;
+  align-items:center;
+  padding:12px 0;
+  border-bottom:1px solid #292536;
+  min-width:0;
+}
+.expense:last-child{border:0}
+.expense>div{min-width:0}
+.expense b{overflow-wrap:anywhere}
+.modal{
+  position:fixed;
+  inset:0;
+  background:#08070db8;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  z-index:10;
+}
+.modal.show{display:flex}
+.dialog{
+  width:min(560px,100%);
+  max-height:90vh;
+  overflow:auto;
+  background:#191724;
+  border:1px solid var(--line);
+  border-radius:22px;
+  padding:22px;
+}
+.form{display:grid;gap:12px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field{display:grid;gap:6px}
+.field label{font-size:13px;color:var(--muted)}
+input,select,textarea{
+  width:100%;
+  background:#11101a;
+  border:1px solid var(--line);
+  color:var(--text);
+  border-radius:11px;
+  padding:11px 12px;
+  outline:none;
+}
+input:focus,select:focus,textarea:focus{border-color:var(--purple)}
+.actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:9px;
+  margin-top:6px;
+}
+.hidden{display:none!important}
+.manage-list{display:grid;gap:8px}
+.manage-item{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:10px;
+  align-items:center;
+  padding:10px 0;
+  border-bottom:1px solid #292536;
+}
+.manage-item span{min-width:0;overflow-wrap:anywhere}
 footer{text-align:center;color:#70697e;font-size:12px;margin-top:12px}
+
+@media(max-width:900px){
+  .grid{grid-template-columns:minmax(0,1fr) minmax(300px,.78fr)}
+  .app{padding-left:18px;padding-right:18px}
+}
+
 @media(max-width:760px){
-  .app{padding:14px 12px 45px}header{padding:19px;border-radius:20px}.title{font-size:24px}
-  .grid{display:block}.card{padding:17px;border-radius:19px;margin-bottom:13px}
-  .games{margin-right:-3px}.game{min-width:110px}
-  .game-card{padding-bottom:13px}.task-card{scroll-margin-top:10px}
-  .expense-total{font-size:30px}.row{grid-template-columns:1fr}
+  .app{padding:14px 12px 45px}
+  header{
+    padding:19px;
+    border-radius:20px;
+    grid-template-columns:minmax(0,1fr) auto;
+    gap:12px;
+  }
+  .title{font-size:24px}
+  .sub{font-size:13px}
+  header>.btn{padding:9px 12px}
+  .grid{display:block}
+  .card{
+    padding:17px;
+    border-radius:19px;
+    margin-bottom:13px;
+  }
+  .card h2{font-size:21px;margin-bottom:15px}
+  .topline{gap:10px}
+  .topline .btn{padding:9px 12px}
+  .games{gap:9px;margin-right:-2px}
+  .game{min-width:110px}
+  .filters{gap:7px;margin-right:-2px}
+  .chip{padding:8px 12px}
+  .task{
+    grid-template-columns:21px minmax(0,1fr) auto;
+    gap:10px;
+    padding:14px 1px;
+  }
+  .task .btn{padding:7px 10px}
+  .taskname{font-size:16px}
+  .meta{font-size:12px}
+  .expense-total{font-size:30px}
+  .expense{gap:9px}
+  .row{grid-template-columns:1fr}
+  .dialog{padding:19px;border-radius:20px}
+}
+
+@media(max-width:430px){
+  header{
+    grid-template-columns:minmax(0,1fr);
+  }
+  header>.btn{justify-self:end}
+  .topline .btn{font-size:14px}
+  .task{grid-template-columns:21px minmax(0,1fr) auto}
 }
 </style>
 </head>
@@ -163,7 +401,7 @@ function render(){
    const late=due&&due<today&&!done;
    return `<div class="task ${done?'done':''}">
    <input class="check" type="checkbox" ${done?'checked':''} onchange="toggleTask('${t.id}')">
-   <div style="flex:1"><div class="taskname">${esc(t.name)}</div>
+   <div class="task-content"><div class="taskname">${esc(t.name)}</div>
    <div class="meta">🎮 ${esc(gameName(t.gameId))}　·　${typeName[t.type]}${t.due?'　·　截止 '+esc(t.due):''}${late?'　<span class="danger">已逾期</span>':''}</div>
    ${t.note?`<div class="meta">${esc(t.note)}</div>`:''}</div>
    <button class="btn small" onclick="deleteTask('${t.id}')">刪除</button></div>`
